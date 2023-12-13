@@ -1,0 +1,59 @@
+@prefix acl:	    <http://www.w3.org/ns/auth/acl#> .
+@prefix acp:	    <http://www.w3.org/ns/solid/acp#> .
+@prefix dc:         <http://purl.org/dc/terms/> .
+@prefix dpv:        <http://www.w3.org/ns/dpv#> .
+@prefix ex:         <http://example.org> .
+@prefix odrl:       <http://www.w3.org/ns/odrl/2/> .
+@prefix rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sec:        <https://w3id.org/security#> .
+
+ex:offerR a odrl:Offer;
+    odrl:profile 		odrl: ;
+    dc:description 	    "Offer to read Teaching Content for Academic Research purposes." ;
+    dc:creator 		    ex:exampleUniversity ;
+    dc:issued 			"2022-11-08T17:58:31"^^xsd:dateTime ;
+	dc:valid			"P1Y0M0D0H0S"^^xsd:duration ;
+    odrl:uid 			ex:offerR ;
+    sec:proof           <#proofGraph> ;
+    odrl:permission     [
+        odrl:assigner 		ex:exampleUniversity ;
+        odrl:action 		odrl:Read ;
+        odrl:target 		ex:exampleTeachingContent ;
+        acp:grant           acl:Read ;  
+        acp:context         [
+            acp:agent           ex:exampleStudent ;
+            acp:target          ex:exampleTeachingContent 
+        ] ;
+        odrl:constraint 	[
+			a odrl:Constraint ;
+			dc:title 			"Permission to read teaching content for the purpose of academic research." ;
+			odrl:leftOperand 	dpv:Purpose ;
+			odrl:operator 		odrl:isA ;
+			odrl:rightOperand 	dpv:AcademicResearch 
+		] ;
+		odrl:duty			[
+			a odrl:Duty ;
+			odrl:action			odrl:grantUse ;
+			odrl:target			_:VerifiablePresentation ;
+			odrl:constraint		[
+				a odrl:Constraint ;
+				dc:title			"Grantee of use is exampleUniversity." ;
+				schema:grantee		ex:exampleUniversity
+			]
+		]
+	] .
+
+[	
+	a sh:ValidationReport ;
+	sh:conforms 		true ;
+	sh:result 			[
+		a sh:ValidationResult ;
+		sh:focusNode 		_:VerifiablePresentation ;
+		sh:sourceShape 		ex:exampleShape#VerifiablePresentationShape ;
+	]
+] .
+
+_:VerifiablePresentation odrl:hasPolicy ex:requestB .
+
+<#proofGraph> { ... }

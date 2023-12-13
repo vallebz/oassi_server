@@ -1,0 +1,75 @@
+@prefix cred:       <https://w3.org/2018/credentials#> .
+@prefix dc:         <http://purl.org/dc/terms/> .
+@prefix dpv:        <http://www.w3.org/ns/dpv#> .
+@prefix ex:         <http://example.org> .
+@prefix oac:        <https://w3id.org/oac#> .
+@prefix odrl:       <http://www.w3.org/ns/odrl/2/> .
+@prefix rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sec:        <https://w3id.org/security#> .
+
+ex:agreementVP a odrl:Agreement ;
+  odrl:profile                  oac: ;  
+  dc:description                "Agreement between an university and a student to read Verifiable Presentation attribute only for the purpose of identity verification based on legitimate interest." ;
+  dc:creator                     ex:exampleStudent ;
+  dc:issued                     "2022-11-08T18:13:37"^^xsd:dateTime ;
+  dc:valid			                "P1Y0M0D0H0S"^^xsd:duration ;
+  dc:references                 ex:requirementVP, ex:requestVP ;
+  dpv:hasDataProtectionOfficer  ex:exampleDataProtOfficer ;
+  dpv:hasDataController         ex:exampleUniversity ;
+  odrl:uid                      ex:agreementVP ;
+  sec:proof                     <#proofGraph> ;
+  odrl:permission       [
+    odrl:assigner         ex:exampleStudent ;
+    odrl:assignee         ex:exampleUniversity ;
+    odrl:action           oac:Read ;
+    odrl:target           [
+      rdf:subject           [ ] ;
+      rdf:predicate         a ;
+      rdf:object            ex:Student ;
+      dc:isRequiredBy       ex:exampleShape#VerifiablePresentationShape ;
+      dc:source             ex:exampleStudent/vp_1
+    ] ;
+    odrl:constraint [
+      odrl:and 
+      [
+        dc:title            "Purpose for access to Verifiable Credential attribute is to verify the identity of the assigner." ;
+        odrl:leftOperand    dpv:Purpose ;
+        odrl:operator       odrl:isA ;
+        odrl:rightOperand   dpv:IdentityVerification
+      ] ,
+      [
+        dc:title            "Legal basis for access is legitimate interest." ;
+        odrl:leftOperand    oac:LegalBasis ;
+        odrl:operator       odrl:isA ;
+        odrl:rightOperand   dpv:LegitimateInterest
+      ]
+    ] 
+  ] .
+
+ex:exampleDataProtOfficer foaf:name "John Muller" ;
+  a dpv:DataProtectionOfficer ;
+  schema:address [ 
+    a schema:PostalAddress ;
+    schema:addressLocality "Anytown" ;
+    schema:postalCode "12345" ;
+    schema:streetAddress "123 Main Street" ;
+    schema:addressCountry "CountryX" ;
+    schema:telephone "012345" ;
+    schema:email "dataprotectionofficer@example.org"
+  ] .
+
+ex:exampleDataController foaf:name "University" ;
+  a dpv:DataController ;  
+  a dpv:AcademicScientificorganisation ;
+  schema:address [ 
+    a schema:PostalAddress ;
+    schema:addressLocality "Anytown" ;
+    schema:postalCode "12345" ;
+    schema:streetAddress "123 Main Street" ;
+    schema:addressCountry "CountryX" ;
+    schema:telephone "012345" ;
+    schema:email "university@example.org"
+  ] .
+
+<#proofGraph> { ... }
