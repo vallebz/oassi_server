@@ -31,7 +31,8 @@ public class MyServletContextListener implements ServletContextListener {
         fr = ctx.addFilter("cross-origin", org.eclipse.jetty.servlets.CrossOriginFilter.class.getName());
         fr.setInitParameter(org.eclipse.jetty.servlets.CrossOriginFilter.ALLOWED_METHODS_PARAM,
                 HttpMethod.GET + "," + HttpMethod.PUT + "," + HttpMethod.POST + "," + HttpMethod.DELETE + "," + HttpMethod.OPTIONS + "," + HttpMethod.HEAD);
-        fr.setInitParameter(org.eclipse.jetty.servlets.CrossOriginFilter.ALLOWED_HEADERS_PARAM , "authn-data");
+        fr.setInitParameter(org.eclipse.jetty.servlets.CrossOriginFilter.ALLOWED_HEADERS_PARAM, "*");
+        fr.setInitParameter(org.eclipse.jetty.servlets.CrossOriginFilter.EXPOSED_HEADERS_PARAM , "*");
         fr.addMappingForUrlPatterns(null, true, "/*");
     }
 }

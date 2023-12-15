@@ -38,13 +38,13 @@ public class MyExampleServlet {
     @Produces(MediaType.TEXT_PLAIN)
     public Response getResource(@HeaderParam("authn-data") String authString) {
 
-        System.out.println(authString);
+        // System.out.println(authString);
 
         String pathSHACL = pathSHACL_test;
 
         if (authString == null) {
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("Provide matching Verifiable Presentation.")
+                    .entity("HTTP ERROR 401 Unauthorized - Provide Credential matching Shape.")
                     .header("WWW-Authenticate",
                             readFile(pathSHACL_VP_TTL_Policies))
                     .header("Content-Type", "text/html")
@@ -54,9 +54,9 @@ public class MyExampleServlet {
         if (validateShape(pathSHACL, authString)) {
             if (validateSignature("Resources", "Signature Value")) {
                 return Response.ok("Succesfull Authorization: " + authString)
+                        .entity("HTTP OK 200 Authorized - Credential matches Shape.")
                         .header("WWW-Authenticate",
                                 readFile(pathAgreements))
-                        // .header("Content-Type", "application/trig")
                         .header("Content-Type", "text/html")
                         .build();
             }
