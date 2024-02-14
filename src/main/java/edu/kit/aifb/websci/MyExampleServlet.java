@@ -38,10 +38,9 @@ public class MyExampleServlet {
     @Produces(MediaType.TEXT_PLAIN)
     public Response getResource(@HeaderParam("authn-data") String authString) {
 
-        // System.out.println(authString);
-
         String pathSHACL = pathSHACL_test;
 
+        // If no credentials are provided, return 401 and ask for matching credentials
         if (authString == null) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity("HTTP ERROR 401 Unauthorized - Provide Credential matching Shape defined in www-authenticate.")
@@ -51,6 +50,8 @@ public class MyExampleServlet {
                     .build();
         }
 
+
+        // If credentials are provided, validate them and return 200 if they match the shape
         if (validateShape(pathSHACL, authString)) {
             if (validateSignature("Resources", "Signature Value")) {
                 return Response.ok("Succesfull Authorization: " + authString)
@@ -62,6 +63,7 @@ public class MyExampleServlet {
             }
         }
 
+        // In any other case, return 401 and ask for a matching credential
         return Response.status(Response.Status.UNAUTHORIZED)
                 .entity("Provide matching Verifiable Presentation.")
                 .header("WWW-Authenticate",
@@ -71,6 +73,8 @@ public class MyExampleServlet {
 
     }
 
+
+    // Read file content and return as string
     public String readFile(String filepath) {
         String content = null;
         File file = new File(filepath);
@@ -87,6 +91,7 @@ public class MyExampleServlet {
         return content;
     }
 
+    // Validate the graph against the shape using SHACL
     public Boolean validateShape(String shapePath, String graph) {
         String SHAPES = readFile(shapePath);
         // String DATA = readFile(graphPath);
@@ -113,10 +118,12 @@ public class MyExampleServlet {
         boolean conforms = report.conforms();
         return conforms;
     }
-
+    
+    // Dummy method - signatures need to be checked
     public boolean validateSignature(String resource, String signatureValue) {
         // Dummy method - signatures need to be checked
         return true;
     }
 
 }
+
