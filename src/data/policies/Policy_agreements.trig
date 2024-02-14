@@ -3,13 +3,16 @@
 @prefix cred:       <https://w3.org/2018/credentials#> .
 @prefix dc:         <http://purl.org/dc/terms/> .
 @prefix dpv:        <http://www.w3.org/ns/dpv#> .
-@prefix ex:         <http://example.org> .
+@prefix ex:         <http://example.org/> .
 @prefix oac:        <https://w3id.org/oac#> .
+@prefix foaf:       <http://xmlns.com/foaf/0.1/> .
 @prefix odrl:       <http://www.w3.org/ns/odrl/2/> .
 @prefix rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema:     <http://schema.org/> .
 @prefix sec:        <https://w3id.org/security#> .
 @prefix sh:         <http://www.w3.org/ns/shacl#> .
+@prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
 
 
 ex:agreementR a odrl:Agreement;
@@ -58,7 +61,7 @@ ex:agreementR a odrl:Agreement;
 	sh:result 			[
 		a sh:ValidationResult ;
 		sh:focusNode 		_:VerifiablePresentation ;
-		sh:sourceShape 		ex:exampleShape#VerifiablePresentationShape ;
+		sh:sourceShape 		ex:exampleShape ;
 	]
 ] .
 
@@ -83,10 +86,10 @@ ex:agreementVP a odrl:Agreement ;
     odrl:action           oac:Read ;
     odrl:target           [
       rdf:subject           [ ] ;
-      rdf:predicate         a ;
+      rdf:predicate         rdf:type ;
       rdf:object            ex:Student ;
-      dc:isRequiredBy       ex:exampleShape#VerifiablePresentationShape ;
-      dc:source             ex:exampleStudent/vp_1
+      dc:isRequiredBy       ex:exampleShape ;
+      dc:source             ex:exampleStudent
     ] ;
     odrl:constraint [
       odrl:and 
@@ -129,7 +132,3 @@ ex:exampleDataController foaf:name "University" ;
     schema:telephone "012345" ;
     schema:email "university@example.org"
   ] .
-
-
-
-<#proofGraph> { ... }

@@ -1,7 +1,9 @@
+@prefix acl:	    <http://www.w3.org/ns/auth/acl#> .
+@prefix acp:	    <http://www.w3.org/ns/solid/acp#> .
 @prefix cred:       <https://w3.org/2018/credentials#> .
 @prefix dc:         <http://purl.org/dc/terms/> .
 @prefix dpv:        <http://www.w3.org/ns/dpv#> .
-@prefix ex:         <http://example.org> .
+@prefix ex:         <http://example.org/> .
 @prefix oac:        <https://w3id.org/oac#> .
 @prefix foaf:       <http://xmlns.com/foaf/0.1/> .
 @prefix odrl:       <http://www.w3.org/ns/odrl/2/> .
@@ -13,86 +15,53 @@
 @prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
 
 
-<#VerifiablePresentationShape>
-    a sh:NodeShape ;
+  <#VerifiablePresentationShape>     a sh:NodeShape ;
     sh:targetClass  cred:VerifiablePresentation ;
-    sh:property     [
-        sh:path     odrl:hasPolicy ;
+    sh:property     [         sh:path     odrl:hasPolicy ;
         sh:node     <#RequirementShape> ;
-        sh:minCount 1 
-    ] ;
-    sh:property     [
-        sh:path     odrl:hasPolicy ;
+        sh:minCount 1      ] ;
+    sh:property     [         sh:path     odrl:hasPolicy ;
         sh:node     <#AgreeementShape> ;
-        sh:minCount 1 
-    ] ;
-    sh:property     [
-        sh:path         cred:verifiableCredential ;
+        sh:minCount 1      ] ;
+    sh:property     [         sh:path         cred:verifiableCredential ;
         sh:node         <#VerifiableCredentialGraphShape> ;
-        sh:minCount     1
-    ] ;
-    sh:property     [
-        sh:path         cred:holder ;
+        sh:minCount     1     ] ;
+    sh:property     [         sh:path         cred:holder ;
         sh:nodeKind     sh:IRI ;
         sh:minCount     1 ;
-        sh:maxCount     1 
-    ] ;
-    sh:property     [
-        sh:path     sec:proof ;
-        sh:minCount 1 
-    ] .
-    
-
-<#VerifiableCredentialGraphShape>
-    a sh:NodeShape ;
+        sh:maxCount     1      ] ;
+    sh:property     [         sh:path     sec:proof ;
+        sh:minCount 1      ] .
+      <#VerifiableCredentialGraphShape>     a sh:NodeShape ;
     sh:targetClass  cred:VerifiableCredentialGraph ;
-    sh:property     [
-        sh:path         cred:credentialSubject ;
+    sh:property     [         sh:path         cred:credentialSubject ;
         sh:nodeKind     sh:IRI ;
         sh:minCount     1 ;
-        sh:node         [
-            sh:property     [
-                sh:path         a ;
+        sh:node         [             sh:property     [                 sh:path         rdf:type ;
                 sh:value        ex:Student ;
-           ] 
-        ]
-    ] ;
-    sh:property     [
-        sh:path         cred:holder ;
+           ]          ]     ] ;
+    sh:property     [         sh:path         cred:holder ;
         sh:nodeKind     sh:IRI ;
         sh:minCount     1 ;
-        sh:maxCount     1
-    ] ;
-    sh:property     [
-        sh:path         cred:issuanceDate ;
+        sh:maxCount     1     ] ;
+    sh:property     [         sh:path         cred:issuanceDate ;
         sh:datatype     xsd:dateTime ;
         sh:minCount     1 ;
-        sh:maxCount     1
-    ] ;
-    sh:property     [
-        sh:path         cred:validFrom ;
+        sh:maxCount     1     ] ;
+    sh:property     [         sh:path         cred:validFrom ;
         sh:lessThan     cred:expirationDate ;
-        sh:maxCount     1 
-    ] ;
-    sh:property     [
-        sh:path         cred:expirationDate ;
+        sh:maxCount     1      ] ;
+    sh:property     [         sh:path         cred:expirationDate ;
         sh:datatype     xsd:dateTime ;
         sh:value        "2023-07-17T11:24:44.801Z";
         sh:minCount     1 ;
-        sh:maxCount     1
-    ] ;
-    sh:property     [
-        sh:path         cred:issuer ;
+        sh:maxCount     1     ] ;
+    sh:property     [         sh:path         cred:issuer ;
         sh:node         ex:exampleUniversity ;
-        sh:minCount     1
-    ] ;
-    sh:property     [
-        sh:path         sec:proof ;
-        sh:minCount     1
-    ] .
-
-
-ex:offerR a odrl:Offer;
+        sh:minCount     1     ] ;
+    sh:property     [         sh:path         sec:proof ;
+        sh:minCount     1     ] .
+  ex:offerR a odrl:Offer;
 odrl:profile 		odrl: ;
 dc:description 	    "Offer to read Teaching Content for Academic Research purposes." ;
 dc:creator 		    ex:exampleUniversity ;
@@ -100,49 +69,31 @@ dc:issued 			"2022-11-08T17:58:31"^^xsd:dateTime ;
 dc:valid			"P1Y0M0D0H0S"^^xsd:duration ;
 odrl:uid 			ex:offerR ;
 sec:proof           <#proofGraph> ;
-odrl:permission     [
-    odrl:assigner 		ex:exampleUniversity ;
+odrl:permission     [     odrl:assigner 		ex:exampleUniversity ;
     odrl:action 		odrl:Read ;
     odrl:target 		ex:exampleTeachingContent ;
-    acp:grant           acl:Read ;  
-    acp:context         [
-        acp:agent           ex:exampleStudent ;
-        acp:target          ex:exampleTeachingContent 
-    ] ;
-    odrl:constraint 	[
-        a odrl:Constraint ;
+    acp:grant           acl:Read ;
+      acp:context         [         acp:agent           ex:exampleStudent ;
+        acp:target          ex:exampleTeachingContent      ] ;
+    odrl:constraint 	[         a odrl:Constraint ;
         dc:title 			"Permission to read teaching content for the purpose of academic research." ;
         odrl:leftOperand 	dpv:Purpose ;
         odrl:operator 		odrl:isA ;
-        odrl:rightOperand 	dpv:AcademicResearch 
-    ] ;
-    odrl:duty			[
-        a odrl:Duty ;
+        odrl:rightOperand 	dpv:AcademicResearch      ] ;
+    odrl:duty			[         a odrl:Duty ;
         odrl:action			odrl:grantUse ;
         odrl:target			_:VerifiablePresentation ;
-        odrl:constraint		[
-            a odrl:Constraint ;
+        odrl:constraint		[             a odrl:Constraint ;
             dc:title			"Grantee of use is exampleUniversity." ;
-            schema:grantee		ex:exampleUniversity
-        ]
-    ]
-] .
-
-[	
-	a sh:ValidationReport ;
+            schema:grantee		ex:exampleUniversity         ]     ] ] .
+ [	 	a sh:ValidationReport ;
 	sh:conforms 		true ;
-	sh:result 			[
-		a sh:ValidationResult ;
+	sh:result 			[ 		a sh:ValidationResult ;
 		sh:focusNode 		_:VerifiablePresentation ;
-		sh:sourceShape 		ex:exampleShape#VerifiablePresentationShape ;
-	]
-] .
-
-_:VerifiablePresentation odrl:hasPolicy ex:requestB .
-
-
-
-ex:requestVP a odrl:Request ;
+		sh:sourceShape 		ex:exampleShape ;
+	] ] .
+ _:VerifiablePresentation odrl:hasPolicy ex:requestB .
+   ex:requestVP a odrl:Request ;
   odrl:profile                  oac: ;
   dc:description                "Request to read Verifiable Presentation attribute for the purpose of identity verification based on legitimate interest." ;
   dc:creator                    ex:exampleUniversity ;
@@ -152,55 +103,37 @@ ex:requestVP a odrl:Request ;
   dpv:hasDataController         ex:exampleUniversity ;
   odrl:uid                      ex:requestVP ;
   sec:proof                     <#proofGraph> ;
-  odrl:permission     [
-    odrl:assignee       ex:exampleUniversity ;
+  odrl:permission     [     odrl:assignee       ex:exampleUniversity ;
     odrl:action         oac:Read ;
-    odrl:target         [
-      rdf:subject           [ ] ;
-      rdf:predicate         a ;
+    odrl:target         [       rdf:subject           [ ] ;
+      rdf:predicate         rdf:type ;
       rdf:object            ex:Student ;
-      dc:isRequiredBy       ex:exampleShape#VerifiablePresentationShape ;
+      dc:isRequiredBy       ex:exampleShape ;
     ] ;
-    odrl:constraint     [
-      odrl:and 
-        [
-          dc:title            "Purpose for access to Verifiable Credential attribute is to verify the identity of the assigner." ;
+    odrl:constraint     [       odrl:and          [           dc:title            "Purpose for access to Verifiable Credential attribute is to verify the identity of the assigner." ;
           odrl:leftOperand    dpv:Purpose ;
           odrl:operator       odrl:isA ;
-          odrl:rightOperand   dpv:IdentityVerification
-        ] ,
-        [
-          dc:title            "Legal basis for access is a legitimate interest." ;
+          odrl:rightOperand   dpv:IdentityVerification         ] ,
+        [           dc:title            "Legal basis for access is a legitimate interest." ;
           odrl:leftOperand    oac:LegalBasis ;
           odrl:operator       odrl:isA ;
-          odrl:rightOperand   dpv:LegitimateInterest
-        ]
-    ]
-  ] .
-
-ex:exampleDataProtOfficer foaf:name "John Muller" ;
+          odrl:rightOperand   dpv:LegitimateInterest         ]     ]   ] .
+ ex:exampleDataProtOfficer foaf:name "John Muller" ;
   a dpv:DataProtectionOfficer ;
-  schema:address [ 
-    a schema:PostalAddress ;
+  schema:address [      a schema:PostalAddress ;
     schema:addressLocality "Anytown" ;
     schema:postalCode "12345" ;
     schema:streetAddress "123 Main Street" ;
     schema:addressCountry "CountryX" ;
     schema:telephone "012345" ;
-    schema:email "dataprotectionofficer@example.org"
-  ] .
-
-ex:exampleDataController foaf:name "University" ;
-  a dpv:DataController ;  
-  a dpv:AcademicScientificorganisation ;
-  schema:address [ 
-    a schema:PostalAddress ;
+    schema:email "dataprotectionofficer@example.org"   ] .
+ ex:exampleDataController foaf:name "University" ;
+  a dpv:DataController ;
+    a dpv:AcademicScientificorganisation ;
+  schema:address [      a schema:PostalAddress ;
     schema:addressLocality "Anytown" ;
     schema:postalCode "12345" ;
     schema:streetAddress "123 Main Street" ;
     schema:addressCountry "CountryX" ;
     schema:telephone "012345" ;
-    schema:email "university@example.org"
-  ] .
-
-  <#proofGraph> { ... }
+    schema:email "university@example.org"   ] .
