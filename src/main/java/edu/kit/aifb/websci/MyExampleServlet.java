@@ -43,7 +43,7 @@ public class MyExampleServlet {
         // If no credentials are provided, return 401 and ask for matching credentials
         if (authString == null) {
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("HTTP ERROR 401 Unauthorized - Provide Credential matching Shape defined in www-authenticate.")
+                    .entity("HTTP error 401 Unauthorized\nProvide Credential matching Shape defined in www-authenticate.")
                     .header("WWW-Authenticate",
                             readFile(pathSHACL_VP_TTL_Policies))
                     .header("Content-Type", "text/html")
@@ -55,7 +55,7 @@ public class MyExampleServlet {
         if (validateShape(pathSHACL, authString)) {
             if (validateSignature("Resources", "Signature Value")) {
                 return Response.ok("Succesfull Authorization: " + authString)
-                        .entity("HTTP OK 200 Authorized - Credential matches Shape.")
+                        .entity("HTTP OK 200 Authorized\nCredential matches Shape.")
                         .header("authn-data",
                                 readFile(pathAgreements))
                         .header("Content-Type", "text/html")
