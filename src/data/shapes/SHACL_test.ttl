@@ -12,3 +12,12 @@ ex:testShape
         sh:hasValue     ex:Human ;
         sh:minCount 1 
     ] .
+
+ex:testShape2
+    a sh:NodeShape ;
+    sh:targetClass  ex:Person ;
+    sh:property     [
+        sh:path         rdf:type ;
+        sh:hasValue     ex:Human ;
+        sh:minCount 1 
+    ] .

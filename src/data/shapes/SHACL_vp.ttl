@@ -1,6 +1,9 @@
 
+@prefix acl:        <http://www.w3.org/ns/auth/acl#> .
+@prefix acp:        <http://www.w3.org/ns/solid/acp#> .
 @prefix cred:       <https://w3.org/2018/credentials#> .
 @prefix dc:         <http://purl.org/dc/terms/> .
+@prefix ex:         <http://example.org/> .
 @prefix rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix schema:     <http://schema.org/> .
@@ -37,7 +40,7 @@
         sh:minCount     1 ;
         sh:node         [
             sh:property     [
-                sh:path         a ;
+                sh:path         rdf:type ;
                 sh:value        ex:Student
            ] 
         ]
@@ -62,7 +65,6 @@
     sh:property     [
         sh:path         cred:expirationDate ;
         sh:datatype     xsd:dateTime ;
-        # sh:value        "2023-07-17T11:24:44.801Z";
         sh:minCount     1 ;
         sh:maxCount     1
     ] ;
@@ -71,8 +73,3 @@
         sh:node         ex:exampleUniversity ;
         sh:minCount     1
     ] .
-    # sh:property     [
-    #     sh:path         sec:proof ;
-    #     sh:minCount     1
-    # ] .
-      
