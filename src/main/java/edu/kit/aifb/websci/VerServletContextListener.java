@@ -13,7 +13,7 @@ import jakarta.servlet.FilterRegistration;
 import jakarta.ws.rs.HttpMethod;
 
 @WebListener
-public class MyServletContextListener implements ServletContextListener {
+public class VerServletContextListener implements ServletContextListener {
 
     ServletContext ctx;
 

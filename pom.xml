@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>edu.kit.aifb.websci</groupId>
-  <artifactId>jakarta-example</artifactId>
+  <artifactId>oassi-verifier</artifactId>
   <version>0.0.1</version>
 
-  <name>jakarta-example</name>
+  <name>oassi-verifier</name>
   <packaging>war</packaging>
 
   <properties>
@@ -28,51 +27,49 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-			<groupId>org.glassfish.jersey.containers</groupId>
-			<artifactId>jersey-container-servlet</artifactId>
-			<version>${jersey.version}</version>
-		</dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-servlet</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
     <dependency>
-			<groupId>org.glassfish.jersey.inject</groupId>
-			<artifactId>jersey-hk2</artifactId>
-			<version>${jersey.version}</version>
-		</dependency>
+      <groupId>org.glassfish.jersey.inject</groupId>
+      <artifactId>jersey-hk2</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.jena</groupId>
       <artifactId>apache-jena-libs</artifactId>
-      <version>4.10.0</version> <!-- Verwenden Sie die neueste Version -->
+      <version>4.10.0</version>
       <type>pom</type>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.apache.jena/jena-shacl -->
     <dependency>
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-shacl</artifactId>
       <version>4.9.0</version>
     </dependency>
     <dependency>
-			<!-- only for its CORS filter: -->
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-servlets</artifactId>
-			<version>${jetty.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-continuation</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-io</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-http</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlets</artifactId>
+      <version>${jetty.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-continuation</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-http</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 
   <build>
-    <finalName>jakarta-example</finalName>
+    <finalName>oassi-verifier</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -95,11 +92,10 @@
           <scanIntervalSeconds>3</scanIntervalSeconds>
           <requestlog implementation="org.eclipse.jetty.server.Slf4jRequestLog" />
           <webApp>
-            <contextPath>/jakarta-example</contextPath>
+            <contextPath>/oassi-verifier</contextPath>
           </webApp>
         </configuration>
       </plugin>
     </plugins>
   </build>
-
 </project>

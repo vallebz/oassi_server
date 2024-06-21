@@ -1,0 +1,57 @@
+@prefix acl:	    <http://www.w3.org/ns/auth/acl#> .
+@prefix acp:	    <http://www.w3.org/ns/solid/acp#> .
+@prefix cred:       <https://w3.org/2018/credentials#> .
+@prefix dc:         <http://purl.org/dc/terms/> .
+@prefix dpv:        <http://www.w3.org/ns/dpv#> .
+@prefix ex:         <http://example.org/> .
+@prefix oac:        <https://w3id.org/oac#> .
+@prefix foaf:       <http://xmlns.com/foaf/0.1/> .
+@prefix odrl:       <http://www.w3.org/ns/odrl/2/> .
+@prefix rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema:     <http://schema.org/> .
+@prefix sec:        <https://w3id.org/security#> .
+@prefix sh:         <http://www.w3.org/ns/shacl#> .
+@prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
+
+
+<#VerifiablePresentationShape>     rdf:type sh:NodeShape ;
+  sh:targetClass  cred:VerifiablePresentation ;
+  sh:property     [         sh:path         cred:verifiableCredential ;
+      sh:node         <#VerifiableCredentialGraphShape> ;
+      sh:minCount     1     ] ;
+  sh:property     [         sh:path         cred:holder ;
+      sh:nodeKind     sh:IRI ;
+      sh:minCount     1 ;
+      sh:maxCount     1      ] ;
+  sh:property     [         sh:path     sec:proof ;
+      sh:minCount 1      ] .
+    
+<#VerifiableCredentialGraphShape>     rdf:type sh:NodeShape ;
+  sh:targetClass  cred:VerifiableCredentialGraph ;
+  sh:property     [         sh:path         cred:credentialSubject ;
+      sh:nodeKind     sh:IRI ;
+      sh:minCount     1 ;
+      sh:node         [             sh:property     [                 sh:path         rdf:type ;
+              sh:value        ex:Student ;
+          ]          ]     ] ;
+  sh:property     [         sh:path         cred:holder ;
+      sh:nodeKind     sh:IRI ;
+      sh:minCount     1 ;
+      sh:maxCount     1     ] ;
+  sh:property     [         sh:path         cred:issuanceDate ;
+      sh:datatype     xsd:dateTime ;
+      sh:minCount     1 ;
+      sh:maxCount     1     ] ;
+  sh:property     [         sh:path         cred:validFrom ;
+      sh:lessThan     cred:expirationDate ;
+      sh:maxCount     1      ] ;
+  sh:property     [         sh:path         cred:expirationDate ;
+      sh:datatype     xsd:dateTime ;
+      sh:minCount     1 ;
+      sh:maxCount     1     ] ;
+  sh:property     [         sh:path         cred:issuer ;
+      sh:node         ex:exampleUniversity ;
+      sh:minCount     1     ] ;
+  sh:property     [         sh:path         sec:proof ;
+      sh:minCount     1     ] .

@@ -1,10 +1,8 @@
 package edu.kit.aifb.websci;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.StringReader;
-
+import java.io.*;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -15,20 +13,14 @@ import org.apache.jena.shacl.Shapes;
 import org.apache.jena.shacl.ValidationReport;
 import org.apache.jena.shacl.lib.ShLib;
 
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+
 
 @Path("/resource") // Specify the URL pattern for the servlet. Remember that this is relative to
 // the application path defined in `pom.xml`
-public class MyExampleServlet {
+public class VerServlet {
 
 
-    String pathSHACL_VP_TTL_Policies = "./src/data/shapes/SHACL_vp_TTL_policies.ttl";
-    String pathAgreements = "./src/data/policies/Policy_agreements.trig";
+    String path_VPshape = "./src/data/shapes/vp_shape.ttl";
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -39,19 +31,17 @@ public class MyExampleServlet {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity("HTTP 401 Unauthorized\nProvide credential matching shape defined in www-authenticate header.")
                     .header("www-authenticate",
-                            readFile(pathSHACL_VP_TTL_Policies))
+                            readFile(path_VPshape))
                     .header("Content-Type", "text/html")
                     .build();
         }
 
 
         // If credentials are provided, validate them and return 200 if they match the shape
-        if (validateShape(pathSHACL_VP_TTL_Policies, authString)) {
+        if (validateShape(path_VPshape, authString)) {
             if (validateSignature("Resources", "Signature Value")) {
                 return Response.ok()
                         .entity("HTTP 200 OK\nAuthorized - Credential matches shape.")
-                        .header("authn-data",
-                                readFile(pathAgreements))
                         .header("Content-Type", "text/html")
                         .build();
             }
@@ -61,7 +51,7 @@ public class MyExampleServlet {
         return Response.status(Response.Status.UNAUTHORIZED)
                 .entity("HTTP 401 Unauthorized\nProvide credential matching shape defined in www-authenticate header.")
                 .header("www-authenticate",
-                        readFile(pathSHACL_VP_TTL_Policies))
+                        readFile(path_VPshape))
                 .header("Content-Type", "text/html")
                 .build();
 
