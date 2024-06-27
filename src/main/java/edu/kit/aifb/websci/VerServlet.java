@@ -87,7 +87,17 @@ public class VerServlet {
     public Response authRequest() {
 
         return Response.ok()
-                .entity("HTTP 200 OK\nAccess Request URI received.")
+                .header("Content-Type", "text/html")
+                .build();
+
+    }
+
+    @POST
+    @Path("/present")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response authPresent() {
+
+        return Response.ok()
                 .header("Content-Type", "text/html")
                 .build();
 
