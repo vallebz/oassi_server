@@ -23,7 +23,7 @@ public class VerServletContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ctx = sce.getServletContext();
-        ServletRegistration sr = ctx.addServlet("MyExampleServlet", ServletContainer.class);
+        ServletRegistration sr = ctx.addServlet("VerServlet", ServletContainer.class);
         sr.addMapping("/*"); // no idea why wildcard is needed, but it is what it is.
         sr.setInitParameter(ServerProperties.PROVIDER_PACKAGES, this.getClass().getPackage().toString());
         FilterRegistration fr;
