@@ -15,6 +15,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -29,6 +30,7 @@ import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.NewCookie.SameSite;
 
+import org.apache.jena.base.Sys;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -103,7 +105,8 @@ public class VerServlet {
 
         // If the session is authorized, return the requested resource.
         return Response.ok()
-                .entity("cookies contain AUTHORIZED JSESSIONID " + cookies.get("JSESSIONID"))
+                .entity("Congratulations, here is your requested resource!\nAUTHORIZED JSESSIONID "
+                        + cookies.get("JSESSIONID").getValue())
                 .header("Content-Type", "text/html")
                 .build();
     }
@@ -147,7 +150,8 @@ public class VerServlet {
 
     @POST
     @Path("/auth/present")
-    public Response authPresent(@Context HttpServletRequest request, @Context HttpHeaders headers) {
+    @Consumes("text/plain")
+    public Response authPresent(@Context HttpServletRequest request, @Context HttpHeaders headers, String input) {
 
         Map<String, Cookie> cookies = headers.getCookies(); // Retrieve the cookies from the request.
 
@@ -167,18 +171,7 @@ public class VerServlet {
 
         // Read the request body containing the Verifiable Presentation (VP).
         String vpString;
-        try (BufferedReader reader = request.getReader()) {
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-            vpString = sb.toString();
-        } catch (IOException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Failed to read request body")
-                    .build();
-        }
+        vpString = input;
 
         // Parse the VP from the request body into a Jena Model.
         Model vpModel = parseRDF(vpString, Lang.TURTLE);
