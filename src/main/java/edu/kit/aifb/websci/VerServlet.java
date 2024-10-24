@@ -53,7 +53,7 @@ public class VerServlet {
     static {
         try {
             // Load SHACL shapes from a file and add them to the resource "resource".
-            String shapeContent = new String(Files.readAllBytes(Paths.get("./src/data/shapes/vp_shape.ttl")));
+            String shapeContent = new String(Files.readAllBytes(Paths.get("./src/data/shapes/example_vp_shape.ttl")));
             AuthService.createResource("resource");
             AuthService.addShapeToResource("resource", parseRDF(shapeContent, Lang.TTL));
 
