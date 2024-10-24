@@ -64,7 +64,7 @@ public class VerServlet {
     @GET
     @Path("/resource")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response getResource(@Context UriInfo uriInfo, @Context HttpHeaders headers) {
+    public Response getResource(@Context UriInfo uriInfo) {
         // Retrieve the nonce parameter from the request.
         String nonce = uriInfo.getQueryParameters().getFirst("nonce");
         String path = uriInfo.getPath(); // Gets the requested resource path.
@@ -79,32 +79,6 @@ public class VerServlet {
                             + "&nonce=" + sessionID, "OID4VC-access-request")
                     .build();
         }
-
-        // Map<String, Cookie> cookies = headers.getCookies(); // Retrieves the cookies
-        // from the request.
-
-        // // If no session cookie is provided or the session is unauthorized, return
-        // 401
-        // // Unauthorized.
-        // if (!cookies.containsKey("JSESSIONID") || cookies.isEmpty()) {
-        // String sessionID = SessionService.createSession(); // Create a new session.
-        // NewCookie newCookie = new NewCookie.Builder("JSESSIONID")
-        // .path("/")
-        // .maxAge(3600)
-        // .value(sessionID)
-        // .secure(true)
-        // .httpOnly(true)
-        // .sameSite(SameSite.STRICT)
-        // .build();
-
-        // return Response.status(Response.Status.UNAUTHORIZED)
-        // .link("http://localhost:8080/auth/request?res="
-        // + Base64.getEncoder().encodeToString(path.getBytes()),
-        // "OID4VC-access-request")
-        // .header("Content-Type", "text/html")
-        // .cookie(newCookie)
-        // .build();
-        // }
 
         // If the session is not authorized for the requested resource, return 401
         // Unauthorized.
@@ -127,14 +101,13 @@ public class VerServlet {
     @GET
     @Path("/auth/request")
     @Produces("text/turtle")
-    public Response authRequest(@Context UriInfo uriInfo, @QueryParam("res") String base64EncodedResource,
-            @Context HttpHeaders headers) {
+    public Response authRequest(@Context UriInfo uriInfo, @QueryParam("res") String base64EncodedResource) {
 
         String nonce = uriInfo.getQueryParameters().getFirst("nonce");
         // If no or invalid sessionID is provided, return 400 Bad Request.
         if (nonce == null || !session_presentations.containsKey(nonce)) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Invalid or no sessionID provided")
+                    .entity("Error: Invalid or no sessionID provided.")
                     .build();
         }
         // If the resource parameter is missing or invalid, return 400 Bad Request.
@@ -172,14 +145,10 @@ public class VerServlet {
     @POST
     @Path("/auth/present")
     @Consumes("text/plain")
-    public Response authPresent(@Context UriInfo uriInfo, @Context HttpServletRequest request,
-            @Context HttpHeaders headers, String input) {
+    public Response authPresent(@Context UriInfo uriInfo, @Context HttpServletRequest request, String input) {
 
-        // Map<String, Cookie> cookies = headers.getCookies(); // Retrieve the cookies
-        // from the request.
         // Retrieve the nonce parameter from the request.
         String nonce = uriInfo.getQueryParameters().getFirst("nonce");
-        // System.out.println("Nonce: " + nonce);
 
         // If no or invalid sessionID is provided, return 400 Bad Request.
         if (nonce == null || !session_presentations.containsKey(nonce)) {
@@ -187,14 +156,6 @@ public class VerServlet {
                     .entity("Invalid or no sessionID provided")
                     .build();
         }
-
-        // String sessionId = cookies.get("JSESSIONID").getValue(); // Retrieve the
-        // session ID from the cookie.
-        // if (sessionId == null) {
-        // return Response.status(Response.Status.BAD_REQUEST)
-        // .entity("No session cookie provided")
-        // .build();
-        // }
 
         // Read the request body containing the Verifiable Presentation (VP).
         String vpString;
@@ -215,9 +176,7 @@ public class VerServlet {
                 .build();
     }
 
-    // SessionService: Manages sessions and their associated verifiable
-    // presentations.
-
+    // Returns all sessionIDs.
     @GET
     @Path("/allSessions")
     @Consumes("text/plain")
@@ -228,6 +187,8 @@ public class VerServlet {
                 .build();
     }
 
+    // SessionService: Manages sessions and their associated verifiable
+    // presentations.
     public static class SessionService {
 
         // Creates a new session and returns its session ID.
