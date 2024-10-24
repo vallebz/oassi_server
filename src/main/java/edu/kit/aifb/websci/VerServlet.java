@@ -56,9 +56,6 @@ public class VerServlet {
             String shapeContent = new String(Files.readAllBytes(Paths.get("./src/data/shapes/example_vp_shape.ttl")));
             AuthService.createResource("resource");
             AuthService.addShapeToResource("resource", parseRDF(shapeContent, Lang.TTL));
-
-            // Create a session when the servlet is initialized.
-            SessionService.createSession();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,34 +65,50 @@ public class VerServlet {
     @Path("/resource")
     @Produces(MediaType.TEXT_PLAIN)
     public Response getResource(@Context UriInfo uriInfo, @Context HttpHeaders headers) {
-
+        // Retrieve the nonce parameter from the request.
+        String nonce = uriInfo.getQueryParameters().getFirst("nonce");
         String path = uriInfo.getPath(); // Gets the requested resource path.
-        Map<String, Cookie> cookies = headers.getCookies(); // Retrieves the cookies from the request.
 
-        // If no session cookie is provided or the session is unauthorized, return 401
-        // Unauthorized.
-        if (!cookies.containsKey("JSESSIONID") || cookies.isEmpty()) {
+        // If the nonce parameter is missing or invalid, return 400 Bad Request.
+        if (nonce == null || nonce.isEmpty()) {
             String sessionID = SessionService.createSession(); // Create a new session.
-            NewCookie newCookie = new NewCookie.Builder("JSESSIONID")
-                    .path("/")
-                    .maxAge(3600)
-                    .value(sessionID)
-                    .secure(true)
-                    .httpOnly(true)
-                    .sameSite(SameSite.STRICT)
-                    .build();
-
             return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("Error: Nonce parameter is missing or invalid.")
                     .link("http://localhost:8080/auth/request?res="
-                            + Base64.getEncoder().encodeToString(path.getBytes()), "OID4VC-access-request")
-                    .header("Content-Type", "text/html")
-                    .cookie(newCookie)
+                            + Base64.getEncoder().encodeToString(path.getBytes())
+                            + "&nonce=" + sessionID, "OID4VC-access-request")
                     .build();
         }
 
+        // Map<String, Cookie> cookies = headers.getCookies(); // Retrieves the cookies
+        // from the request.
+
+        // // If no session cookie is provided or the session is unauthorized, return
+        // 401
+        // // Unauthorized.
+        // if (!cookies.containsKey("JSESSIONID") || cookies.isEmpty()) {
+        // String sessionID = SessionService.createSession(); // Create a new session.
+        // NewCookie newCookie = new NewCookie.Builder("JSESSIONID")
+        // .path("/")
+        // .maxAge(3600)
+        // .value(sessionID)
+        // .secure(true)
+        // .httpOnly(true)
+        // .sameSite(SameSite.STRICT)
+        // .build();
+
+        // return Response.status(Response.Status.UNAUTHORIZED)
+        // .link("http://localhost:8080/auth/request?res="
+        // + Base64.getEncoder().encodeToString(path.getBytes()),
+        // "OID4VC-access-request")
+        // .header("Content-Type", "text/html")
+        // .cookie(newCookie)
+        // .build();
+        // }
+
         // If the session is not authorized for the requested resource, return 401
         // Unauthorized.
-        if (!SessionService.isSessionAuthorizedForResource(cookies.get("JSESSIONID").getValue(), path)) {
+        if (!SessionService.isSessionAuthorizedForResource(nonce, path)) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .link("http://localhost:8080/auth/request?res="
                             + Base64.getEncoder().encodeToString(path.getBytes()), "OID4VC-access-request")
@@ -105,8 +118,8 @@ public class VerServlet {
 
         // If the session is authorized, return the requested resource.
         return Response.ok()
-                .entity("Congratulations, here is your requested resource!\nAUTHORIZED JSESSIONID "
-                        + cookies.get("JSESSIONID").getValue())
+                .entity("Congratulations, here is your requested resource! Authorized session: "
+                        + nonce)
                 .header("Content-Type", "text/html")
                 .build();
     }
@@ -114,8 +127,16 @@ public class VerServlet {
     @GET
     @Path("/auth/request")
     @Produces("text/turtle")
-    public Response authRequest(@QueryParam("res") String base64EncodedResource, @Context HttpHeaders headers) {
+    public Response authRequest(@Context UriInfo uriInfo, @QueryParam("res") String base64EncodedResource,
+            @Context HttpHeaders headers) {
 
+        String nonce = uriInfo.getQueryParameters().getFirst("nonce");
+        // If no or invalid sessionID is provided, return 400 Bad Request.
+        if (nonce == null || !session_presentations.containsKey(nonce)) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid or no sessionID provided")
+                    .build();
+        }
         // If the resource parameter is missing or invalid, return 400 Bad Request.
         if (base64EncodedResource == null || base64EncodedResource.isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Error: No resource provided.")
@@ -144,30 +165,36 @@ public class VerServlet {
 
         return Response.ok(allShapes.toString())
                 .header("Content-Type", "text/turtle")
-                .link("http://localhost:8080/auth/present", "OID4VC-access-presentation")
+                .link("http://localhost:8080/auth/present?nonce=" + nonce, "OID4VC-access-presentation")
                 .build();
     }
 
     @POST
     @Path("/auth/present")
     @Consumes("text/plain")
-    public Response authPresent(@Context HttpServletRequest request, @Context HttpHeaders headers, String input) {
+    public Response authPresent(@Context UriInfo uriInfo, @Context HttpServletRequest request,
+            @Context HttpHeaders headers, String input) {
 
-        Map<String, Cookie> cookies = headers.getCookies(); // Retrieve the cookies from the request.
+        // Map<String, Cookie> cookies = headers.getCookies(); // Retrieve the cookies
+        // from the request.
+        // Retrieve the nonce parameter from the request.
+        String nonce = uriInfo.getQueryParameters().getFirst("nonce");
+        // System.out.println("Nonce: " + nonce);
 
-        // If no session cookie is provided, return 400 Bad Request.
-        if (cookies.isEmpty()) {
+        // If no or invalid sessionID is provided, return 400 Bad Request.
+        if (nonce == null || !session_presentations.containsKey(nonce)) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("No session cookie provided")
+                    .entity("Invalid or no sessionID provided")
                     .build();
         }
 
-        String sessionId = cookies.get("JSESSIONID").getValue(); // Retrieve the session ID from the cookie.
-        if (sessionId == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("No session cookie provided")
-                    .build();
-        }
+        // String sessionId = cookies.get("JSESSIONID").getValue(); // Retrieve the
+        // session ID from the cookie.
+        // if (sessionId == null) {
+        // return Response.status(Response.Status.BAD_REQUEST)
+        // .entity("No session cookie provided")
+        // .build();
+        // }
 
         // Read the request body containing the Verifiable Presentation (VP).
         String vpString;
@@ -177,18 +204,30 @@ public class VerServlet {
         Model vpModel = parseRDF(vpString, Lang.TURTLE);
 
         // Add the VP to the session.
-        ArrayList<Model> tmp_presentations = SessionService.getPresentationsForSession(sessionId);
+        ArrayList<Model> tmp_presentations = SessionService.getPresentationsForSession(nonce);
         tmp_presentations.add(vpModel);
-        SessionService.addToSession(sessionId, tmp_presentations);
+        SessionService.addToSession(nonce, tmp_presentations);
 
         return Response.ok()
-                .entity("Presentation added to session " + sessionId)
+                .entity("Presentation added to session " + nonce)
+                .link("http://localhost:8080/resource?nonce=" + nonce, "OID4VC-access-resource")
                 .header("Content-Type", "text/html")
                 .build();
     }
 
     // SessionService: Manages sessions and their associated verifiable
     // presentations.
+
+    @GET
+    @Path("/allSessions")
+    @Consumes("text/plain")
+    public Response allSessions() {
+        return Response.ok()
+                .entity(session_presentations.toString())
+                .header("Content-Type", "text/html")
+                .build();
+    }
+
     public static class SessionService {
 
         // Creates a new session and returns its session ID.
