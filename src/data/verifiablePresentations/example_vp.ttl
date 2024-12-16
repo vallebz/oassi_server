@@ -3,7 +3,7 @@
 @prefix cred:       <https://w3.org/2018/credentials#> .
 @prefix dc:         <http://purl.org/dc/terms/> .
 @prefix dpv:        <http://www.w3.org/ns/dpv#> .
-@prefix ex:         <http://example.org> .
+@prefix ex:         <http://example.org/> .
 @prefix oac:        <https://w3id.org/oac#> .
 @prefix foaf:       <http://xmlns.com/foaf/0.1/> .
 @prefix odrl:       <http://www.w3.org/ns/odrl/2/> .
@@ -17,25 +17,25 @@
 
 <#exampleStudentPresentation> a cred:VerifiablePresentation ;
 
-    cred:verifiableCredential   <#exampleStudentCredential> ;
-    cred:holder                 <#exampleStudent> ;
+    cred:verifiableCredential   <#exampleTaxAdvisorCredential> ;
+    cred:holder                 <#exampleTaxAdvisor> ;
     sec:proof                   <#presentationProofGraph> .
 
 
-<#exampleStudentCredential> a cred:VerifiableCredentialGraph ;
-    schema:description      "An example credential, issued by an example university to an example student." ;
-    cred:credentialSubject  <#exampleStudent> ;
-    cred:holder             <#exampleStudent> ;
+<#exampleTaxAdvisorCredential> a cred:VerifiableCredentialGraph ;
+    schema:description      "An example credential, issued by a Tax Advisory Office to an employed Tax Advisor." ;
+    cred:credentialSubject  <#exampleTaxAdvisor> ;
+    cred:holder             <#exampleTaxAdvisor> ;
     cred:validFrom          "2023-12-06T11:05:44.403Z"^^xsd:dateTime ;
     cred:expirationDate     "2024-12-06T11:05:44.403Z"^^xsd:dateTime ;
     cred:issuanceDate       "2022-12-06T11:05:44.403Z"^^xsd:dateTime ;
-    cred:issuer             ex:exampleUniversity ;
+    cred:issuer             ex:exampleTaxAdvisoryOffice ;
     sec:proof               <#proofGraph> .
 
-<#exampleStudent> a schema:Person , ex:Student ;
+<#exampleTaxAdvisor> a schema:Person , ex:TaxAdvisor ;
     foaf:name               "John Doe" ;
-    schema:memberOf         ex:exampleUniversity ;
-    ex:degreeCourse         ex:MechanicalEngineering ;
-    ex:degree               ex:BachelorOfScience ;
-    ex:matriculationNumber  12345678 ;
-    ex:enrolledSince        "2018-08"^^xsd:gYearMonth .  
+    schema:memberOf         ex:exampleTaxAdvisoryOffice ;
+    ex:degreeCourse         ex:Finance ;
+    ex:degree               ex:BachelorOfScience, ex:MasterOfScience ;
+    ex:employeeNumber       123 ;
+    ex:employedSince        "2018-08"^^xsd:gYearMonth .  
